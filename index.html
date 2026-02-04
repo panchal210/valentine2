@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>A Special Question...</title>
+    <title>A Simple Question...</title>
     <style>
         body {
             background-color: #fff0f3;
@@ -14,19 +14,20 @@
             margin: 0;
             font-family: 'Segoe UI', sans-serif;
             overflow: hidden;
+            transition: background 0.3s;
         }
 
         .container {
             background: white;
             padding: 2rem;
             border-radius: 20px;
-            box-shadow: 0 10px 25px rgba(255, 75, 110, 0.2);
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
             text-align: center;
             width: 350px;
             z-index: 10;
+            transition: all 0.3s ease;
         }
 
-        /* Fixed size for the gif area to prevent layout shifts */
         .gif-wrapper {
             width: 100%;
             height: 200px;
@@ -42,10 +43,14 @@
             border-radius: 12px;
         }
 
-        h1 {
-            color: #ff4b6e;
-            font-size: 1.8rem;
-            margin: 10px 0;
+        h1 { color: #ff4b6e; font-size: 1.8rem; margin: 10px 0; }
+        
+        #warning-text {
+            color: #888;
+            font-size: 0.85rem;
+            margin-top: 10px;
+            font-style: italic;
+            min-height: 1.2rem;
         }
 
         .buttons {
@@ -54,7 +59,6 @@
             align-items: center;
             gap: 15px;
             margin-top: 20px;
-            height: 50px;
         }
 
         button {
@@ -64,18 +68,26 @@
             border-radius: 50px;
             cursor: pointer;
             font-weight: bold;
-            transition: transform 0.2s;
         }
 
-        #yesBtn {
-            background-color: #ff4b6e;
-            color: white;
-        }
+        #yesBtn { background-color: #ff4b6e; color: white; }
 
         #noBtn {
             background-color: #eee;
             color: #555;
-            z-index: 1000;
+            transition: 0.1s;
+        }
+
+        /* Shake animation for consequences */
+        .shake {
+            animation: shake 0.5s cubic-bezier(.36,.07,.19,.97) both;
+        }
+
+        @keyframes shake {
+            10%, 90% { transform: translate3d(-1px, 0, 0); }
+            20%, 80% { transform: translate3d(2px, 0, 0); }
+            30%, 50%, 70% { transform: translate3d(-4px, 0, 0); }
+            40%, 60% { transform: translate3d(4px, 0, 0); }
         }
 
         .heart {
@@ -93,7 +105,7 @@
 </head>
 <body>
 
-    <div class="container">
+    <div class="container" id="mainCard">
         <div class="gif-wrapper">
             <img id="displayGif" src="https://i.giphy.com/media/v1.Y2lkPTc5MGI3NjExM3ZleHdkZ3Jidm96eHk1Mnd4Z3B0ZzR0ZzR0ZzR0ZzR0ZzR0ZzR0JmcmVzaCZlcD12MV9pbnRlcm5hbF9naWZfYnlfaWQmY3Q9cw/cLS1cfxvGOPVpf9g3y/giphy.gif" alt="Asking bear">
         </div>
@@ -101,20 +113,38 @@
         
         <div class="buttons">
             <button id="yesBtn" onclick="celebrate()">Yes!</button>
-            <button id="noBtn" onmouseover="moveButton()" onclick="moveButton()">No</button>
+            <button id="noBtn" onmouseover="moveButton()" onclick="consequence()">No</button>
         </div>
+        
+        <p id="warning-text">Tip: Don't try to press NO. There are consequences.</p>
     </div>
 
     <script>
+        let avoidCount = 0;
+        const warnings = [
+            "Tip: Don't try to press NO. There are consequences.",
+            "I'm warning you...",
+            "Seriously? Stop that.",
+            "You're making the bear sad.",
+            "Okay, now you're just being mean.",
+            "SYSTEM OVERLOAD. STOP."
+        ];
+
         function moveButton() {
             const noBtn = document.getElementById('noBtn');
+            const warningDisplay = document.getElementById('warning-text');
             
-            // Set to fixed on first interaction
+            avoidCount++;
+            
+            // Update warning text based on how many times they tried
+            if (avoidCount < warnings.length) {
+                warningDisplay.innerText = warnings[avoidCount];
+            }
+
             if (noBtn.style.position !== 'fixed') {
                 noBtn.style.position = 'fixed';
             }
 
-            // Move it to a random spot within the window
             const x = Math.random() * (window.innerWidth - noBtn.offsetWidth);
             const y = Math.random() * (window.innerHeight - noBtn.offsetHeight);
             
@@ -122,14 +152,34 @@
             noBtn.style.top = y + 'px';
         }
 
+        // The "Consequence" if they actually manage to click it
+        function consequence() {
+            const card = document.getElementById('mainCard');
+            const gif = document.getElementById('displayGif');
+            const question = document.getElementById('question');
+            
+            // Visual "Glitch"
+            document.body.style.backgroundColor = "#500";
+            card.classList.add('shake');
+            question.innerText = "ERROR: WRONG CHOICE";
+            gif.src = "https://i.giphy.com/media/v1.Y2lkPTc5MGI3NjExOHZlZGFiaXF1ZnE0ZzR0ZzR0ZzR0ZzR0ZzR0ZzR0ZzR0ZzR0ZzR0JmcmVzaCZlcD12MV9pbnRlcm5hbF9naWZfYnlfaWQmY3Q9cw/MDJ9NmIeS77Vn9HInm/giphy.gif"; // Angry/crying cat
+            
+            setTimeout(() => {
+                card.classList.remove('shake');
+                alert("The system does not recognize 'No' as a valid input. Please try again with 'Yes'.");
+                window.location.reload(); // Resets the page
+            }, 1000);
+        }
+
         function celebrate() {
             const question = document.getElementById('question');
             const buttons = document.querySelector('.buttons');
             const gif = document.getElementById('displayGif');
+            const warning = document.getElementById('warning-text');
 
-            question.innerHTML = "Yay! See you soon! ❤️";
+            question.innerHTML = "Wise choice! ❤️";
             buttons.style.display = 'none';
-            // Change to a happy celebration gif
+            warning.style.display = 'none';
             gif.src = "https://i.giphy.com/media/v1.Y2lkPTc5MGI3NjExM3ZleHdkZ3Jidm96eHk1Mnd4Z3B0ZzR0ZzR0ZzR0ZzR0ZzR0ZzR0JmcmVzaCZlcD12MV9pbnRlcm5hbF9naWZfYnlfaWQmY3Q9cw/L4lvBpHFmxc6V0N0wD/giphy.gif";
 
             setInterval(createHeart, 150);
