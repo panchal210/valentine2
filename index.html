@@ -1,141 +1,149 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>For You ❤️</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>A Special Question...</title>
+    <style>
+        body {
+            background-color: #fff0f3;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            margin: 0;
+            font-family: 'Segoe UI', sans-serif;
+            overflow: hidden;
+        }
 
-  <style>
-    body {
-      margin: 0;
-      height: 100vh;
-      background: linear-gradient(135deg, #ff9a9e, #fad0c4);
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      font-family: system-ui, -apple-system, BlinkMacSystemFont, sans-serif;
-      overflow: hidden;
-    }
+        .container {
+            background: white;
+            padding: 2rem;
+            border-radius: 20px;
+            box-shadow: 0 10px 25px rgba(255, 75, 110, 0.2);
+            text-align: center;
+            width: 350px;
+            z-index: 10;
+        }
 
-    .card {
-      background: white;
-      padding: 28px;
-      border-radius: 24px;
-      box-shadow: 0 25px 50px rgba(0,0,0,0.2);
-      width: 90%;
-      max-width: 360px;
-      text-align: center;
-      z-index: 2;
-    }
+        /* Fixed size for the gif area to prevent layout shifts */
+        .gif-wrapper {
+            width: 100%;
+            height: 200px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            margin-bottom: 1rem;
+        }
 
-    .text {
-      font-size: 1.2rem;
-      line-height: 1.5;
-      min-height: 90px;
-    }
+        .gif-wrapper img {
+            max-width: 100%;
+            max-height: 100%;
+            border-radius: 12px;
+        }
 
-    .tap {
-      margin-top: 20px;
-      font-size: 0.9rem;
-      color: #6b7280;
-    }
+        h1 {
+            color: #ff4b6e;
+            font-size: 1.8rem;
+            margin: 10px 0;
+        }
 
-    button {
-      margin-top: 20px;
-      padding: 12px 24px;
-      font-size: 1rem;
-      border-radius: 999px;
-      border: none;
-      background: #ec4899;
-      color: white;
-      cursor: pointer;
-    }
+        .buttons {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 15px;
+            margin-top: 20px;
+            height: 50px;
+        }
 
-    .heart {
-      position: fixed;
-      font-size: 22px;
-      animation: float 4s linear forwards;
-      pointer-events: none;
-    }
+        button {
+            padding: 12px 25px;
+            font-size: 1rem;
+            border: none;
+            border-radius: 50px;
+            cursor: pointer;
+            font-weight: bold;
+            transition: transform 0.2s;
+        }
 
-    @keyframes float {
-      from {
-        transform: translateY(0) scale(1);
-        opacity: 1;
-      }
-      to {
-        transform: translateY(-120vh) scale(1.8);
-        opacity: 0;
-      }
-    }
-  </style>
+        #yesBtn {
+            background-color: #ff4b6e;
+            color: white;
+        }
+
+        #noBtn {
+            background-color: #eee;
+            color: #555;
+            z-index: 1000;
+        }
+
+        .heart {
+            position: absolute;
+            color: #ff4b6e;
+            pointer-events: none;
+            animation: float 3s linear forwards;
+        }
+
+        @keyframes float {
+            0% { transform: translateY(100vh) scale(0); opacity: 1; }
+            100% { transform: translateY(-10vh) scale(1.5); opacity: 0; }
+        }
+    </style>
 </head>
-
 <body>
 
-  <div class="card" id="card" onclick="nextStep()">
-    <div class="text" id="text">
-      I made something small for you ❤️
-    </div>
-    <div class="tap" id="tap">
-      Tap anywhere
-    </div>
-  </div>
-
-  <script>
-    const messages = [
-      "I made something small for you ❤️",
-      "Because you’ve been on my mind more than you know.",
-      "Every smile, every moment — they matter to me.",
-      "So I wanted to ask you something special…"
-    ];
-
-    let step = 0;
-
-    function nextStep() {
-      step++;
-      if (step < messages.length) {
-        document.getElementById("text").innerText = messages[step];
-      } else {
-        showQuestion();
-      }
-    }
-
-    function showQuestion() {
-      const card = document.getElementById("card");
-      card.onclick = null;
-      card.innerHTML = `
-        <div class="text">
-          Will you be my Valentine? 💖
+    <div class="container">
+        <div class="gif-wrapper">
+            <img id="displayGif" src="https://i.giphy.com/media/v1.Y2lkPTc5MGI3NjExM3ZleHdkZ3Jidm96eHk1Mnd4Z3B0ZzR0ZzR0ZzR0ZzR0ZzR0ZzR0JmcmVzaCZlcD12MV9pbnRlcm5hbF9naWZfYnlfaWQmY3Q9cw/cLS1cfxvGOPVpf9g3y/giphy.gif" alt="Asking bear">
         </div>
-        <button onclick="sayYes()">Yes ❤️</button>
-      `;
-    }
-
-    function sayYes() {
-      const card = document.getElementById("card");
-      card.innerHTML = `
-        <div class="text">
-          You just made my heart very happy 💕
-          <br><br>
-          Happy Valentine’s Day 💘
+        <h1 id="question">Will you be my Valentine?</h1>
+        
+        <div class="buttons">
+            <button id="yesBtn" onclick="celebrate()">Yes!</button>
+            <button id="noBtn" onmouseover="moveButton()" onclick="moveButton()">No</button>
         </div>
-      `;
-      startHearts();
-    }
+    </div>
 
-    function startHearts() {
-      setInterval(() => {
-        const heart = document.createElement("div");
-        heart.className = "heart";
-        heart.innerText = "💖";
-        heart.style.left = Math.random() * 100 + "vw";
-        heart.style.bottom = "-30px";
-        document.body.appendChild(heart);
-        setTimeout(() => heart.remove(), 4000);
-      }, 300);
-    }
-  </script>
+    <script>
+        function moveButton() {
+            const noBtn = document.getElementById('noBtn');
+            
+            // Set to fixed on first interaction
+            if (noBtn.style.position !== 'fixed') {
+                noBtn.style.position = 'fixed';
+            }
 
+            // Move it to a random spot within the window
+            const x = Math.random() * (window.innerWidth - noBtn.offsetWidth);
+            const y = Math.random() * (window.innerHeight - noBtn.offsetHeight);
+            
+            noBtn.style.left = x + 'px';
+            noBtn.style.top = y + 'px';
+        }
+
+        function celebrate() {
+            const question = document.getElementById('question');
+            const buttons = document.querySelector('.buttons');
+            const gif = document.getElementById('displayGif');
+
+            question.innerHTML = "Yay! See you soon! ❤️";
+            buttons.style.display = 'none';
+            // Change to a happy celebration gif
+            gif.src = "https://i.giphy.com/media/v1.Y2lkPTc5MGI3NjExM3ZleHdkZ3Jidm96eHk1Mnd4Z3B0ZzR0ZzR0ZzR0ZzR0ZzR0ZzR0JmcmVzaCZlcD12MV9pbnRlcm5hbF9naWZfYnlfaWQmY3Q9cw/L4lvBpHFmxc6V0N0wD/giphy.gif";
+
+            setInterval(createHeart, 150);
+        }
+
+        function createHeart() {
+            const heart = document.createElement('div');
+            heart.classList.add('heart');
+            heart.innerHTML = '❤️';
+            heart.style.left = Math.random() * 100 + 'vw';
+            heart.style.fontSize = (Math.random() * 20 + 15) + 'px';
+            document.body.appendChild(heart);
+            setTimeout(() => heart.remove(), 3000);
+        }
+    </script>
 </body>
 </html>
